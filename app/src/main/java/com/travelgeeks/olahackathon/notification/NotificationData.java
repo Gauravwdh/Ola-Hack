@@ -8,9 +8,9 @@ import java.util.List;
  */
 public class NotificationData {
 
-    private String title;
-    private String content;
-    private String id;
+    public String title;
+    public String content;
+    public String id;
 
 
     public String getTitle() {

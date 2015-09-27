@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.animation.AnimationSet;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.travelgeeks.olahackathon.data.CabAvailability;
@@ -11,20 +14,25 @@ import com.travelgeeks.olahackathon.ride.GridRideActivity;
 import com.travelgeeks.olahackathon.service.LocationService;
 import com.travelgeeks.olahackathon.utilities.ApplicationPreference;
 import com.travelgeeks.olahackathon.utilities.Logger;
+import com.travelgeeks.olahackathon.utilities.SmsParser;
 
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = MainActivity.class.getName();
+    private View title;
+    private View btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        findViewById(R.id.btn).setOnClickListener(this);
-        findViewById(R.id.btn2).setOnClickListener(this);
+        title = findViewById(R.id.title);
+        btn = findViewById(R.id.btn2);
+        btn.setOnClickListener(this);
         startService(new Intent(this, LocationService.class));
+
         new Thread() {
             @Override
             public void run() {
@@ -35,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }.start();
     }
-
 
     private void registerGcm() {
         try {

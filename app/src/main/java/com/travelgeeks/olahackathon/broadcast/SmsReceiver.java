@@ -1,6 +1,7 @@
 package com.travelgeeks.olahackathon.broadcast;
 
 import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +32,11 @@ public class SmsReceiver extends BroadcastReceiver {
                     long eventTime = SmsParser.getInstance().getTime(senderNum, message);
                     eventTime -= AlarmManager.INTERVAL_HALF_HOUR;
 
+                    AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                    Intent data = new Intent(context, NotificationBroadcastReceiver.class);
+                    intent.putExtra("data", message);
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, eventTime, PendingIntent.getBroadcast(context, 0, data, PendingIntent
+                            .FLAG_UPDATE_CURRENT));
 
                 }
             }

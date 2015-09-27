@@ -9,6 +9,7 @@ import com.travelgeeks.olahackathon.OlaHackathonApplication;
 import com.travelgeeks.olahackathon.R;
 import com.travelgeeks.olahackathon.data.CabAvailability;
 import com.travelgeeks.olahackathon.ride.data.GridData;
+import com.travelgeeks.olahackathon.utilities.Util;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,8 +21,10 @@ public class GridItemAdaptor extends RecyclerView.Adapter<GridItemViewHolder> {
 
     private final LayoutInflater layoutInflater;
     private List<CabAvailability> data;
+    private Context context;
 
     public GridItemAdaptor(Context context, List<CabAvailability> data) {
+        this.context = context;
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.data = data;
     }
@@ -35,13 +38,6 @@ public class GridItemAdaptor extends RecyclerView.Adapter<GridItemViewHolder> {
 
     @Override
     public void onBindViewHolder(GridItemViewHolder gridItemViewHolder, int position) {
-        if (position == 0) {
-            gridItemViewHolder.layout.setBackgroundColor(OlaHackathonApplication.getInstance().getResources().getColor(R.color.green));
-        } else if (position == getItemCount() - 1) {
-            gridItemViewHolder.layout.setBackgroundColor(OlaHackathonApplication.getInstance().getResources().getColor(R.color.red));
-        }else{
-            gridItemViewHolder.layout.setBackgroundColor(OlaHackathonApplication.getInstance().getResources().getColor(android.R.color.white));
-        }
         gridItemViewHolder.populate(data.get(position));
     }
 
@@ -51,6 +47,12 @@ public class GridItemAdaptor extends RecyclerView.Adapter<GridItemViewHolder> {
     }
 
     public void sortByCheapest() {
+        for (int i = 0; i < data.size(); i++) {
+            if (data.get(i).fareBreakUpList == null || data.get(i).fareBreakUpList.size() == 0) {
+                Util.showToast(context, "Can't sort data not available.");
+                return;
+            }
+        }
         Collections.sort(data, CabAvailability.CHEAPEST);
         notifyDataSetChanged();
     }

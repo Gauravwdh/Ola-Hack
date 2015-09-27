@@ -14,6 +14,7 @@ import com.travelgeeks.olahackathon.R;
 import com.travelgeeks.olahackathon.broadcast.DelayNotificationReceiver;
 import com.travelgeeks.olahackathon.broadcast.DismissBroadcastReceiver;
 import com.travelgeeks.olahackathon.data.BookingData;
+import com.travelgeeks.olahackathon.ride.GridRideActivity;
 import com.travelgeeks.olahackathon.service.BookCabService;
 import com.travelgeeks.olahackathon.utilities.ApplicationPreference;
 
@@ -44,7 +45,7 @@ public class NotificationHandler {
             builder.setContentText(data.getMessage());
         }
         builder.setSmallIcon(R.drawable.ic_directions_car_black_24dp);
-        builder.setContentIntent(PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), PendingIntent
+        builder.setContentIntent(PendingIntent.getActivity(context, 0, new Intent(context, GridRideActivity.class), PendingIntent
                 .FLAG_UPDATE_CURRENT));
         builder.setAutoCancel(true);
         Notification build = builder.build();
@@ -66,7 +67,7 @@ public class NotificationHandler {
         builder.setContentTitle(notificationData.getTitle());
         builder.setContentText(notificationData.getContent());
         builder.setSmallIcon(R.drawable.ic_directions_car_black_24dp);
-        builder.setContentIntent(PendingIntent.getActivity(context, 1, new Intent(context, MainActivity.class), PendingIntent
+        builder.setContentIntent(PendingIntent.getActivity(context, 1, new Intent(context, GridRideActivity.class), PendingIntent
                 .FLAG_UPDATE_CURRENT));
         builder.setAutoCancel(true);
         Notification build = builder.build();

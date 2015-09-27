@@ -11,6 +11,7 @@ import com.android.volley.VolleyError;
 import com.travelgeeks.olahackathon.Constant;
 import com.travelgeeks.olahackathon.data.BookingData;
 import com.travelgeeks.olahackathon.data.CabAvailability;
+import com.travelgeeks.olahackathon.data.CabAvailabilityResponse;
 import com.travelgeeks.olahackathon.notification.NotificationHandler;
 import com.travelgeeks.olahackathon.ride.adaptor.GridItemAdaptor;
 import com.travelgeeks.olahackathon.ride.data.GridData;
@@ -42,9 +43,37 @@ public class BookCabService extends IntentService {
     private Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
+            Util.showToast(BookCabService.this, "Error occurred while booking cab");
             Logger.d(error);
         }
     };
+    private Response.Listener<CabAvailabilityResponse> availableListener = new Response.Listener<CabAvailabilityResponse>() {
+
+        @Override
+        public void onResponse(CabAvailabilityResponse response) {
+            if (response.getList().size() == 0) {
+                Util.showToast(BookCabService.this, "No cab available");
+            }
+            List<CabAvailability> list = response.getList();
+            boolean isBooked = false;
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).eta != -1) {
+                    double lat = Double.parseDouble(ApplicationPreference.getInstance().get(ApplicationPreference.UPDATED_LATITUDE, null));
+                    double lon = Double.parseDouble(ApplicationPreference.getInstance().get(ApplicationPreference.UPDATED_LONGITUDE, null));
+                    String api = Constant.Api.getBookingApiUrl(lat, lon, list.get(i).displayName);
+                    CustomRequest<BookingData> request = new CustomRequest<BookingData>(Request.Method.GET, api,
+                            BookingData.class, listener, errorListener);
+                    ApiCallHandler.getApiCallHandler().addRequest(TAG, request);
+                    isBooked = true;
+                    break;
+                }
+            }
+            if (!isBooked) {
+                Util.showToast(BookCabService.this, "Error occurred while booking cab");
+            }
+        }
+    };
+    ;
 
     public BookCabService() {
         super(TAG);
@@ -54,12 +83,14 @@ public class BookCabService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         ApplicationPreference.getInstance().put(ApplicationPreference.LAST_EVENT_TIME, System.currentTimeMillis());
         NotificationHandler.cancelNotification(getApplicationContext());
-        double lat = 12.9328261;
-        double lon = 77.602766;
-        String api = Constant.Api.getBookingApiUrl(lat, lon, CabAvailability.CAB_SEDAN);
-        CustomRequest<BookingData> request = new CustomRequest<BookingData>(Request.Method.GET, api,
-                BookingData.class, listener, errorListener);
+        double lat = Double.parseDouble(ApplicationPreference.getInstance().get(ApplicationPreference.UPDATED_LATITUDE, null));
+        double lon = Double.parseDouble(ApplicationPreference.getInstance().get(ApplicationPreference.UPDATED_LONGITUDE, null));
+
+        String api = Constant.Api.getAvailabilityApiUrl(lat, lon);
+        CustomRequest<CabAvailabilityResponse> request = new CustomRequest<CabAvailabilityResponse>(Request.Method.GET, api,
+                CabAvailabilityResponse.class, availableListener, errorListener);
         ApiCallHandler.getApiCallHandler().addRequest(TAG, request);
+
 
     }
 }

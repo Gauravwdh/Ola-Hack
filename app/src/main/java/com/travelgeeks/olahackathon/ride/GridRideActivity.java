@@ -39,7 +39,11 @@ public class GridRideActivity extends BaseActivity {
 
         @Override
         public void onResponse(CabAvailabilityResponse response) {
-//            recyclerView.setAdapter(new GridItemAdaptor(GridRideActivity.this, response.getList()));
+            if (response.getList().size() == 0) {
+                Util.showToast(GridRideActivity.this, "No cab available");
+            }
+            gridItemAdaptor = new GridItemAdaptor(GridRideActivity.this, response.getList());
+            recyclerView.setAdapter(gridItemAdaptor);
 
         }
     };
@@ -60,18 +64,10 @@ public class GridRideActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.grid_ride);
         recyclerView = (RecyclerView) findViewById(R.id.grid_recycler);
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 1);
         recyclerView.setLayoutManager(layoutManager);
-
-        List<CabAvailability> staticData = CabAvailability.getStaticData();
-        Collections.sort(staticData, CabAvailability.NEAREST);
-        gridItemAdaptor = new GridItemAdaptor(GridRideActivity.this, staticData);
-        recyclerView.setAdapter(gridItemAdaptor);
-
         double lat = Double.parseDouble(ApplicationPreference.getInstance().get(ApplicationPreference.UPDATED_LATITUDE, null));
         double lon = Double.parseDouble(ApplicationPreference.getInstance().get(ApplicationPreference.UPDATED_LONGITUDE, null));
-//        double lat = 12.9328261;
-//        double lon = 77.602766;
         String api = Constant.Api.getAvailabilityApiUrl(lat, lon);
         CustomRequest<CabAvailabilityResponse> request = new CustomRequest<CabAvailabilityResponse>(Request.Method.GET, api,
                 CabAvailabilityResponse.class, listener, errorListener);
@@ -87,13 +83,15 @@ public class GridRideActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_fastest:
-                gridItemAdaptor.sortByNearest();
-                break;
-            case R.id.menu_cheapest:
-                gridItemAdaptor.sortByCheapest();
-                break;
+        if (gridItemAdaptor != null) {
+            switch (item.getItemId()) {
+                case R.id.menu_fastest:
+                    gridItemAdaptor.sortByNearest();
+                    break;
+                case R.id.menu_cheapest:
+                    gridItemAdaptor.sortByCheapest();
+                    break;
+            }
         }
         return super.onOptionsItemSelected(item);
     }

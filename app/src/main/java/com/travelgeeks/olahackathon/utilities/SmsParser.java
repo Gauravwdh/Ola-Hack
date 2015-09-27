@@ -57,6 +57,7 @@ public class SmsParser {
         if (!matchFound(sender, message)) {
             return -1;
         }
+
         String shortName = SmsUtil.getShortNameForSender(sender);
         Pattern pattern = Pattern.compile(map.get(shortName));
         Matcher matcher = pattern.matcher(message);
