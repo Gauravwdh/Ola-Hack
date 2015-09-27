@@ -16,7 +16,7 @@ import com.travelgeeks.olahackathon.utilities.Logger;
  */
 public class DelayNotificationReceiver extends BroadcastReceiver {
 
-    private static final int REPEAT_TIME = 1 * 60 * 1000;
+    private static final int REPEAT_TIME = 15 * 60 * 1000;
     private static final int MAX_REPEAT_COUNT = 3;
 
     public static final String REQUEST_ID = "request_id";
