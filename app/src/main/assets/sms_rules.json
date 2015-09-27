@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "sender": "WAYSMS",
+      "regex": "(?i).* date: (\\d{2})-(\\d{2})-(\\d{4}) time: (\\d{2}):(\\d{2}) ([AMP]{2}) .*"
+    }
+  ]
+}
